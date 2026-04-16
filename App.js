@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Home from './tabs/Home';
 import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
+import { initializeDatabase } from './database/TasksRepositories';
 
 const Stack = createNativeStackNavigator()
 
@@ -12,7 +13,12 @@ export default function App() {
 
   useEffect( () => {
 
+    const instanceDatabase = async () => {
 
+      await initializeDatabase()
+    }
+
+    instanceDatabase()
   }, [])
 
   const [fontsLoaded] = useFonts({

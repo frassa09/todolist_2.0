@@ -1,7 +1,7 @@
 import { idWasUsed } from "../database/IdGeneratorRepositories"
 
 
-const generateId = (tasks) => {
+export const generateId = (tasks) => {
 
     try {
         
