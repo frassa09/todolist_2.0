@@ -1,33 +1,36 @@
-import { idWasUsed } from "../database/IdGeneratorRepositories"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { getAllUsedIds, idWasUsed } from "../database/IdGeneratorRepositories"
+import { databaseKeys } from "./database_keys"
 
 
-export const generateId = (tasks) => {
+export const generateId = async (tasks) => {
 
     try {
-        
+
         let possibleId = tasks.length
         let idIsOccupied = true
 
-        while(idIsOccupied){
+        const usedIds = await getAllUsedIds()
 
-            idIsOccupied = verifyId(possibleId)
+        if (usedIds.length > 0) {
+            while (idIsOccupied) {
 
-            if(idIsOccupied){
-                possibleId += 1
+                idIsOccupied = usedIds.includes(possibleId)
+
+                if (idIsOccupied) {
+                    possibleId += 1
+                }
             }
         }
+
+        usedIds.push(possibleId)
+
+        await AsyncStorage.setItem(databaseKeys.used_ids, JSON.stringify(usedIds))
 
         return possibleId
 
     }
-    catch(e){
+    catch (e) {
         console.log(e)
     }
-}
-
-const verifyId = async (possibleId) => {
-
-    const idIsOccupied = await idWasUsed(possibleId)
-
-    return idIsOccupied
 }

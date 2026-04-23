@@ -14,7 +14,7 @@ export const initializeDatabase = async () => {
                 await AsyncStorage.setItem(databaseKeys.tasks, JSON.stringify([]))
             }
             if(!idsDatabase){
-                await AsyncStorage.setItem(databaseKeys.tasks, JSON.stringify([]))
+                await AsyncStorage.setItem(databaseKeys.used_ids, JSON.stringify([]))
             }
         }
     }
@@ -48,7 +48,13 @@ export const saveTask = async (task) => {
 
         console.log(tasks)
 
-        const idTask = generateId(tasks)
+        const idTask = await generateId(tasks)
+
+        task.id = idTask
+
+        tasks.push(task)
+
+        await AsyncStorage.setItem(databaseKeys.tasks, JSON.stringify(tasks))
 
         
     }

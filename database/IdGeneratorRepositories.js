@@ -8,18 +8,29 @@ export const idWasUsed = async (id) => {
 
         const parsedIds = JSON.parse(ids)
 
-        for(const actualId of parsedIds){
-
-            if(actualId === id){
-                return false
-            }
+        if (parsedIds.length > 0) {
+            return parsedIds.includes(id)
         }
 
-        return true
+        return false
+
+        
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+export const getAllUsedIds = async () => {
+
+    try {
+
+        const data = await AsyncStorage.getItem(databaseKeys.used_ids)
+
+        return JSON.parse(data)
     }
     catch(e){
         console.log(e)
+        return e
     }
-
-
 }
