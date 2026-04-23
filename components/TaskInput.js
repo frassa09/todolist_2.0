@@ -1,51 +1,96 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { Modal, SafeAreaView, TextInput } from 'react-native-web'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { ScrollView, View } from 'moti'
+import React, { useState } from 'react'
+
+import { Modal, TextInput } from 'react-native'
 import Ionicons from '@react-native-vector-icons/ionicons'
+import { SelectList } from 'react-native-dropdown-select-list'
+import { taskClassification } from '../utils/tasks_classifications'
+import { saveTask } from '../database/TasksRepositories'
 
 export default function TaskInput({ closeModal }) {
 
-    
+    const [titulo, setTitulo] = useState(undefined)
+    const [descricao, setDescricao] = useState(undefined)
+    const [prioridade, setPrioridade] = useState(undefined)
+
+    const data = [
+        { key: '1', value: 'Normal' },
+        { key: '2', value: 'Urgente' },
+        { key: '3', value: 'Não-Urgente' }
+    ]
+
+    const salvarTarefa = async () => {
+
+        console.log('funcao chamada')
+
+        if (!titulo || !descricao || !prioridade) {
+            return alert('Preencha todos os campos corretamente para criar uma tarefa')
+        }
+
+        let prioridadeEscolhida
+
+        switch (prioridade) {
+            case '1': prioridadeEscolhida = taskClassification.normal
+                break
+            case '2': prioridadeEscolhida = taskClassification.urgente
+                break
+            case '3': prioridadeEscolhida = taskClassification.nao_urgente
+        }
+
+        const tarefa = {
+            titulo,
+            descricao,
+            prioridadeEscolhida
+        }
+
+        await saveTask(tarefa)
+        closeModal()
+    }
+
+
     return (
-        <Modal transparent={true} onDismiss={true} style={styles.main_container}>
-            <View style={styles.main_container}>
-                <View style={{ marginBottom: 40, marginLeft: 10 }}>
-                    <TouchableOpacity onPress={closeModal}>
-                        <Ionicons name='close' size={30}></Ionicons>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={{ gap: 10, marginBottom: 60 }}>
-                    <Text style={{textAlign: 'center'}}>
-                        Insira o título da sua tarefa
-                    </Text>
-                    <TextInput style={styles.input_title_task} multiline={true}></TextInput>
-                    <Text style={{ textAlign: 'center' }}>
-                        Insira a descrição da sua tarefa
-                    </Text>
-                    <TextInput style={styles.input_desc_task} multiline={true}></TextInput>
-
-                    <TouchableOpacity style={[{ justifyContent: 'center', alignSelf: 'center', backgroundColor: '#90aab6ff', height: 30, width: 100, borderRadius: 10, alignItems: 'center'}]}>
-                        <Text>
-                            Criar
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+        <View style={styles.main_container} from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }} exit={{ opacity: 0, scale: 0.9 }}>
+            <View style={{ marginBottom: 20, marginLeft: 10 }}>
+                <TouchableOpacity onPress={closeModal}>
+                    <Ionicons name='close' size={30}></Ionicons>
+                </TouchableOpacity>
             </View>
 
-        </Modal>
+            <View style={{ gap: 10, marginBottom: 40 }}>
+                <Text style={{ textAlign: 'center' }}>
+                    Insira o título da sua tarefa
+                </Text>
+                <TextInput style={styles.input_title_task} multiline={true} value={titulo} onChangeText={(text) => setTitulo(text)}></TextInput>
+                <Text style={{ textAlign: 'center' }}>
+                    Insira a descrição da sua tarefa
+                </Text>
+                <TextInput style={styles.input_desc_task} multiline={true} value={descricao} onChangeText={(text) => setDescricao(text)}></TextInput>
+
+                <SelectList data={data} placeholder='Selecione a prioridade' searchPlaceholder='Buscar' setSelected={(val) => {
+                    setPrioridade(val)
+                    console.log(val)
+                }} boxStyles={{ width: 400, alignSelf: 'center', marginTop: 10 }} dropdownStyles={{ width: 400, alignSelf: 'center', marginTop: 10 }}></SelectList>
+
+                <TouchableOpacity style={[{ justifyContent: 'center', alignSelf: 'center', backgroundColor: '#90aab6ff', height: 30, width: 100, borderRadius: 10, alignItems: 'center', marginTop: 10 }]} onPress={() => salvarTarefa()}>
+                    <Text>
+                        Criar
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     main_container: {
-        marginTop: 250,
         backgroundColor: '#aac0caff',
-        height: 400,
+        minHeight: 400,
         width: 700,
         alignSelf: 'center',
         justifyContent: 'center',
-        borderRadius: 10
+        borderRadius: 10,
+        marginBottom: 50
     },
     input_title_task: {
         backgroundColor: '#90aab6ff',
