@@ -4,13 +4,13 @@ import Checkbox from 'expo-checkbox'
 import { taskClassification } from '../utils/tasks_classifications'
 import Ionicons from '@react-native-vector-icons/ionicons'
 
-export default function TaskItem({ tituloTarefa, urgencia, tipo, corTipo }) {
+export default function TaskItem({ tituloTarefa, urgencia }) {
 
   const [isChecked, setIsChecked] = useState(false)
 
 
   return (
-    <View style={styles.container_tarefa}>
+    <TouchableOpacity style={styles.container_tarefa}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <View>
           <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center', flex: 1 }}>
@@ -19,11 +19,11 @@ export default function TaskItem({ tituloTarefa, urgencia, tipo, corTipo }) {
           </View>
           <View style={{ flexDirection: 'row' }}>
             <Text style={[styles.task_classification, { backgroundColor: urgencia.color }, styles.default_font]}>
-              {taskClassification.normal.text}
+              {urgencia.text}
             </Text>
-            <Text style={[styles.task_type, { backgroundColor: corTipo }, styles.default_font]}>
+            {/* <Text style={[styles.task_type, { backgroundColor: corTipo }, styles.default_font]}>
               {tipo}
-            </Text>
+            </Text> */}
           </View>
         </View>
         <TouchableOpacity style={{ justifyContent: 'center' }}>
@@ -32,7 +32,7 @@ export default function TaskItem({ tituloTarefa, urgencia, tipo, corTipo }) {
 
       </View>
 
-    </View>
+    </TouchableOpacity>
   )
 }
 
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     elevation: 20,
     paddingHorizontal: 15,
+    marginTop: 15
   },
   checkbox_tarefa: {
     marginLeft: 10,
